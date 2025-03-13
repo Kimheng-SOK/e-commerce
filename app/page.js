@@ -1,8 +1,6 @@
- "use client"
+"use client";
 import Image from "next/image";
-import { useRef } from "react";
-import { useEffect } from "react";
-
+import { useState, useEffect, useRef } from "react";
 <Image
       src="/pair-man-woman-wearing-glasses-carried-lots-paper-bags-shopping.jpg"
       alt="Shopping image"
@@ -11,110 +9,78 @@ import { useEffect } from "react";
   />
 
 export default function Home() {
-
-  useEffect(() => {
-    const mobileMenu = document.getElementById("mobile-menu");
-    const navLinks = document.getElementById("nav-links");
-
-    if (mobileMenu && navLinks) {
-      mobileMenu.addEventListener("click", () => {
-        navLinks.classList.toggle("hidden");
-      });
-    }
-
-    // Cleanup function to remove event listener when component unmounts
-    return () => {
-      if (mobileMenu) {
-        mobileMenu.removeEventListener("click", () => {
-          navLinks.classList.toggle("hidden");
-        });
-      }
-    };
-  }, []); // Empty dependency array to run only once
-
-  // FAQ Accordion Functionality
-  // const faqItems = document.querySelectorAll('.faq-item');
-
-  // faqItems.forEach((item) => {
-  //   const question = item.querySelector('.faq-question');
-  //   question.addEventListener('click', () => {
-  //     item.classList.toggle('active');
-  //   });
-  // });
-
-  useEffect(() => {
-    const faqItems = document.querySelectorAll(".faq-item");
-
-    faqItems.forEach((item) => {
-      const question = item.querySelector(".faq-question");
-      const answer = item.querySelector(".faq-answer");
-
-      if (question && answer) {
-        question.addEventListener("click", () => {
-          answer.classList.toggle("hidden");
-        });
-      }
-    });
-
-    // Cleanup function to remove event listeners when the component unmounts
-    return () => {
-      faqItems.forEach((item) => {
-        const question = item.querySelector(".faq-question");
-        const answer = item.querySelector(".faq-answer");
-        if (question) {
-          question.removeEventListener("click", () => {
-            answer.classList.toggle("hidden");
-          });
-        }
-      });
-    };
-  }, []); // Runs only once after component mounts
-
-
+  const [cart, setCart] = useState([]);
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+  const [activeFAQIndex, setActiveFAQIndex] = useState(null);
   const sliderRef = useRef(null);
 
-  function scrollSlider(direction) {
+  // Toggle mobile menu
+  const toggleMobileMenu = () => {
+    setIsMobileMenuOpen(!isMobileMenuOpen);
+  };
+
+  // Toggle FAQ item
+  const toggleFAQ = (index) => {
+    setActiveFAQIndex(activeFAQIndex === index ? null : index);
+  };
+
+  // Add to cart
+  const addToCart = (product) => {
+    setCart([...cart, product]);
+  };
+
+  // Scroll slider
+  const scrollSlider = (direction) => {
     if (sliderRef.current) {
-      const scrollAmount = 300; // Adjust as needed
-      sliderRef.current.scrollBy({ left: direction * scrollAmount, behavior: "smooth" });
+      sliderRef.current.scrollBy({ left: direction * 300, behavior: "smooth" });
     }
-  }
+  };
 
-  // Set the countdown date (e.g., 24 hours from now)
-const countdownDate = new Date().getTime() + 24 * 60 * 60 * 1000;
+  // Countdown Timer
+  useEffect(() => {
+    const countdownElement = document.querySelector(".countdown-timer");
+    const hoursElement = document.getElementById("hours");
+    const minutesElement = document.getElementById("minutes");
+    const secondsElement = document.getElementById("seconds");
 
-// Update the countdown every second
-const countdownTimer = setInterval(() => {
-  const now = new Date().getTime();
-  const distance = countdownDate - now;
+    if (hoursElement && minutesElement && secondsElement) {
+      const countdownDate = new Date().getTime() + 24 * 60 * 60 * 1000; // 24-hour countdown
 
-  // Calculate hours, minutes, and seconds
-  const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
-  const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
-  const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+      function updateCountdown() {
+        const now = new Date().getTime();
+        const distance = countdownDate - now;
 
-  // Display the countdown
-  document.getElementById('hours').textContent = String(Math.floor(hours)).padStart(2, '0');
-  document.getElementById('minutes').textContent = String(Math.floor(minutes)).padStart(2, '0');
-  document.getElementById('seconds').textContent = String(Math.floor(seconds)).padStart(2, '0');
+        if (distance < 0) {
+          clearInterval(timer);
+          if (countdownElement) countdownElement.innerHTML = "<p>Sale Ended!</p>";
+          return;
+        }
 
-  // If the countdown is over, display a message
-  if (distance < 0) {
-    clearInterval(countdownTimer);
-    document.querySelector('.countdown-timer').innerHTML = '<p>Sale Ended!</p>';
-  }
-}, 1000);
+        const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+        const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+        const seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+        hoursElement.textContent = String(hours).padStart(2, "0");
+        minutesElement.textContent = String(minutes).padStart(2, "0");
+        secondsElement.textContent = String(seconds).padStart(2, "0");
+      }
+
+      const timer = setInterval(updateCountdown, 1000);
+
+      // Cleanup function to clear the interval when the component unmounts
+      return () => clearInterval(timer);
+    }
+  }, []);
+
 
   return (
     <div>
       <nav className="navbar">
-        {/* <!-- Logo --> */}
         <div className="logo">
           <a href="#">E-Shop</a>
         </div>
 
-        {/* <!-- Menu Links --> */}
-        <ul className="nav-links" id="nav-links">
+        <ul className={`nav-links ${isMobileMenuOpen ? "show-mobile" : ""}`}>
           <li><a href="#home">Home</a></li>
           <li><a href="#featured-products">Shop</a></li>
           <li><a href="#categories">Categories</a></li>
@@ -122,28 +88,28 @@ const countdownTimer = setInterval(() => {
           <li><a href="#contact-support">Contact</a></li>
         </ul>
 
-        {/* <!-- Search Bar --> */}
         <div className="search-bar">
           <input type="text" placeholder="Search products..." />
           <button><i className="fas fa-search"></i></button>
         </div>
 
-        {/* <!-- Icons --> */}
         <div className="nav-icons">
-          <a href="#"><i className="fas fa-shopping-cart"></i></a>
+          <a href="#">
+            <i className="fas fa-shopping-cart"></i>
+            {cart.length > 0 && <span className="cart-badge">{cart.length}</span>}
+          </a>
           <a href="#"><i className="fas fa-user"></i></a>
           <a href="#"><i className="fas fa-heart"></i></a>
         </div>
 
-        {/* <!-- Mobile Menu Toggle --> */}
-        <div className="menu-toggle" id="mobile-menu">
+        <div className="menu-toggle" onClick={toggleMobileMenu}>
           <span className="bar"></span>
           <span className="bar"></span>
           <span className="bar"></span>
         </div>
       </nav>
 
-      {/* <!-- HTML selection part --> */}
+      {/* Hero Section */}
       <section className="hero" id="home">
         <div className="hero-content">
           <h1>Discover the Latest Trends</h1>
@@ -152,87 +118,87 @@ const countdownTimer = setInterval(() => {
         </div>
       </section>
 
-      {/* <!-- Product part --> */}
+      {/* Featured Products Section */}
       <section className="featured-products" id="featured-products">
         <h2>Featured Products</h2>
         <div className="product-grid">
-          {/* <!-- Product 1 --> */}
+          {/* Product 1 */}
           <div className="product-card">
-            <img src="white-canvas-sneakers-unisex-footwear-fashion.jpg" alt="Product 1"/>
+            <img src="white-canvas-sneakers-unisex-footwear-fashion.jpg" alt="Product 1" />
             <h3>Wireless Headphones</h3>
             <p className="price">$99.99</p>
-            <button className="add-to-cart-btn">Add to Cart</button>
+            <button className="add-to-cart-btn" onClick={() => addToCart("Wireless Headphones")}>Add to Cart</button>
           </div>
 
-          {/* <!-- Product 2 --> */}
+          {/* Product 2 */}
           <div className="product-card">
-            <img src="smartwatch-screen-digital-device.jpg" alt="Product 2"/>
+            <img src="smartwatch-screen-digital-device.jpg" alt="Product 2" />
             <h3>Smart Watch</h3>
             <p className="price">$149.99</p>
-            <button className="add-to-cart-btn">Add to Cart</button>
+            <button className="add-to-cart-btn" onClick={() => addToCart("Smart Watch")}>Add to Cart</button>
           </div>
 
-          {/* <!-- Product 3 --> */}
+          {/* Product 3 */}
           <div className="product-card">
-            <img src="reusable-eco-friendly-tote-bag.jpg" alt="Product 3"/>
+            <img src="reusable-eco-friendly-tote-bag.jpg" alt="Product 3" />
             <h3>Fashion Bag</h3>
             <p className="price">$79.99</p>
-            <button className="add-to-cart-btn">Add to Cart</button>
+            <button className="add-to-cart-btn" onClick={() => addToCart("Fashion Bag")}>Add to Cart</button>
           </div>
 
-          {/* <!-- Product 4 --> */}
+          {/* Product 4 */}
           <div className="product-card">
-            <img src="white-canvas-sneakers-unisex-footwear-fashion.jpg" alt="Product 4"/>
+            <img src="white-canvas-sneakers-unisex-footwear-fashion.jpg" alt="Product 4" />
             <h3>White Shoes</h3>
             <p className="price">$59.99</p>
-            <button className="add-to-cart-btn">Add to Cart</button>
+            <button className="add-to-cart-btn" onClick={() => addToCart("White Shoes")}>Add to Cart</button>
           </div>
 
-          {/* <!-- Product 5 --> */}
+          {/* Product 5 */}
           <div className="product-card">
-            <img src="casual-white-blouse-women-rsquo-s-fashion.jpg" alt="Product 5"/>
+            <img src="casual-white-blouse-women-rsquo-s-fashion.jpg" alt="Product 5" />
             <h3>White Shirt</h3>
             <p className="price">$49.99</p>
-            <button className="add-to-cart-btn">Add to Cart</button>
+            <button className="add-to-cart-btn" onClick={() => addToCart("White Shirt")}>Add to Cart</button>
           </div>
         </div>
       </section>
 
-      {/* <!-- categories section --> */}
+      {/* Categories Section */}
       <section className="categories" id="categories">
         <h2>Men's Fashion Categories</h2>
         <div className="category-grid">
-          {/* <!-- Category 1 --> */}
+          {/* Category 1 */}
           <div className="category-card">
             <i className="fas fa-tshirt"></i>
             <h3>T-Shirts</h3>
           </div>
 
-          {/* <!-- Category 2 --> */}
+          {/* Category 2 */}
           <div className="category-card">
             <i className="fas fa-shoe-prints"></i>
             <h3>Shoes</h3>
           </div>
 
-          {/* <!-- Category 3 --> */}
+          {/* Category 3 */}
           <div className="category-card">
             <i className="fas fa-vest"></i>
             <h3>Jackets</h3>
           </div>
 
-          {/* <!-- Category 4 --> */}
+          {/* Category 4 */}
           <div className="category-card">
             <i className="fas fa-hat-cowboy"></i>
             <h3>Accessories</h3>
           </div>
 
-          {/* <!-- Category 5 --> */}
+          {/* Category 5 */}
           <div className="category-card">
             <i className="fas fa-rings-wedding"></i>
             <h3>Watches</h3>
           </div>
 
-          {/* <!-- Category 6 --> */}
+          {/* Category 6 */}
           <div className="category-card">
             <i className="fas fa-socks"></i>
             <h3>Underwear</h3>
@@ -240,121 +206,121 @@ const countdownTimer = setInterval(() => {
         </div>
       </section>
 
-      {/* <!-- About Us section  --> */}
+      {/* About Us Section */}
       <section className="about-us" id="about-us">
         <div className="about-content">
           <h2>About Us</h2>
           <p className="intro">
-            Welcome to <strong>E-Shop</strong>, your go-to destination for the latest trends in fashion and lifestyle. 
+            Welcome to <strong>E-Shop</strong>, your go-to destination for the latest trends in fashion and lifestyle.
             We are passionate about delivering high-quality products that inspire and empower our customers.
           </p>
           <p className="unique">
-            What sets us apart is our commitment to sustainability, exceptional customer service, and a curated selection 
+            What sets us apart is our commitment to sustainability, exceptional customer service, and a curated selection
             of products that cater to your unique style. We believe in making fashion accessible, affordable, and eco-friendly.
           </p>
         </div>
         <div className="about-image">
-          <img src="business-people-partnership-support-team-urban-scene-concept.jpg" alt="Our Team"/>
+          <img src="business-people-partnership-support-team-urban-scene-concept.jpg" alt="Our Team" />
         </div>
       </section>
 
-      {/* <!-- customers review --> */}
+      {/* Customer Reviews Section */}
       <section className="customer-reviews" id="customer-reviews">
-      <h2>What Our Customers Say</h2>
+        <h2>What Our Customers Say</h2>
 
-      {/* Navigation Arrows */}
-      <button className="slider-arrow left-arrow" onClick={() => scrollSlider(-1)}>
-        <i className="fas fa-chevron-left"></i>
-      </button>
+        {/* Navigation Arrows */}
+        <button className="slider-arrow left-arrow" onClick={() => scrollSlider(-1)}>
+          <i className="fas fa-chevron-left"></i>
+        </button>
 
-      <div className="review-slider" ref={sliderRef}>
-        {/* Review 1 */}
-        <div className="review-card">
-          <div className="user-icon">
-            <i className="fas fa-user"></i>
-          </div>
-          <div className="user-info">
-            <h3>John Doe</h3>
-            <div className="star-rating">
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
+        <div className="review-slider" ref={sliderRef}>
+          {/* Review 1 */}
+          <div className="review-card">
+            <div className="user-icon">
+              <i className="fas fa-user"></i>
             </div>
+            <div className="user-info">
+              <h3>John Doe</h3>
+              <div className="star-rating">
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+              </div>
+            </div>
+            <p className="feedback">
+              "I absolutely love the quality of the products! Fast shipping and excellent customer service. Highly recommend!"
+            </p>
           </div>
-          <p className="feedback">
-            "I absolutely love the quality of the products! Fast shipping and excellent customer service. Highly recommend!"
-          </p>
+
+          {/* Review 2 */}
+          <div className="review-card">
+            <div className="user-icon">
+              <i className="fas fa-user"></i>
+            </div>
+            <div className="user-info">
+              <h3>Jane Smith</h3>
+              <div className="star-rating">
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star-half-alt"></i>
+              </div>
+            </div>
+            <p className="feedback">
+              "Great selection of products and amazing deals. My go-to store for all my fashion needs!"
+            </p>
+          </div>
+
+          {/* Review 3 */}
+          <div className="review-card">
+            <div className="user-icon">
+              <i className="fas fa-user"></i>
+            </div>
+            <div className="user-info">
+              <h3>Mike Johnson</h3>
+              <div className="star-rating">
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="far fa-star"></i>
+              </div>
+            </div>
+            <p className="feedback">
+              "The products are top-notch, and the delivery was super fast. Will definitely shop here again!"
+            </p>
+          </div>
+
+          {/* Review 4 */}
+          <div className="review-card">
+            <div className="user-icon">
+              <i className="fas fa-user"></i>
+            </div>
+            <div className="user-info">
+              <h3>Emily Brown</h3>
+              <div className="star-rating">
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+                <i className="fas fa-star"></i>
+              </div>
+            </div>
+            <p className="feedback">
+              "Amazing experience! The customer support team was very helpful, and the products are worth every penny."
+            </p>
+          </div>
         </div>
 
-        {/* Review 2 */}
-        <div className="review-card">
-          <div className="user-icon">
-            <i className="fas fa-user"></i>
-          </div>
-          <div className="user-info">
-            <h3>Jane Smith</h3>
-            <div className="star-rating">
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star-half-alt"></i>
-            </div>
-          </div>
-          <p className="feedback">
-            "Great selection of products and amazing deals. My go-to store for all my fashion needs!"
-          </p>
-        </div>
+        <button className="slider-arrow right-arrow" onClick={() => scrollSlider(1)}>
+          <i className="fas fa-chevron-right"></i>
+        </button>
+      </section>
 
-        {/* Review 3 */}
-        <div className="review-card">
-          <div className="user-icon">
-            <i className="fas fa-user"></i>
-          </div>
-          <div className="user-info">
-            <h3>Mike Johnson</h3>
-            <div className="star-rating">
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="far fa-star"></i>
-            </div>
-          </div>
-          <p className="feedback">
-            "The products are top-notch, and the delivery was super fast. Will definitely shop here again!"
-          </p>
-        </div>
-
-        {/* Review 4 */}
-        <div className="review-card">
-          <div className="user-icon">
-            <i className="fas fa-user"></i>
-          </div>
-          <div className="user-info">
-            <h3>Emily Brown</h3>
-            <div className="star-rating">
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-              <i className="fas fa-star"></i>
-            </div>
-          </div>
-          <p className="feedback">
-            "Amazing experience! The customer support team was very helpful, and the products are worth every penny."
-          </p>
-        </div>
-      </div>
-
-      <button className="slider-arrow right-arrow" onClick={() => scrollSlider(1)}>
-        <i className="fas fa-chevron-right"></i>
-      </button>
-    </section>
-
-      {/* <!-- special offers --> */}
+      {/* Special Offers Section */}
       <section className="special-offers">
         <div className="offer-banner">
           <h2>Flash Sale!</h2>
@@ -377,21 +343,21 @@ const countdownTimer = setInterval(() => {
         </div>
       </section>
 
-      {/* <!-- contact and questions --> */}
+      {/* Contact & Support Section */}
       <section className="contact-support" id="contact-support">
         <h2>Contact & Support</h2>
         <div className="container">
-          {/* <!-- Contact Form --> */}
+          {/* Contact Form */}
           <div className="contact-form">
             <h3>Get in Touch</h3>
             <form>
               <div className="form-group">
                 <label htmlFor="name">Name</label>
-                <input type="text" id="name" name="name" placeholder="Enter your name" required/>
+                <input type="text" id="name" name="name" placeholder="Enter your name" required />
               </div>
               <div className="form-group">
                 <label htmlFor="email">Email</label>
-                <input type="email" id="email" name="email" placeholder="Enter your email" required/>
+                <input type="email" id="email" name="email" placeholder="Enter your email" required />
               </div>
               <div className="form-group">
                 <label htmlFor="message">Message</label>
@@ -401,13 +367,13 @@ const countdownTimer = setInterval(() => {
             </form>
           </div>
 
-          {/* <!-- FAQ Accordion --> */}
+          {/* FAQ Accordion */}
           <div className="faq-section">
             <h3>Frequently Asked Questions</h3>
             <div className="faq-accordion">
-              {/* <!-- FAQ Item 1 --> */}
-              <div className="faq-item">
-                <button className="faq-question">
+              {/* FAQ Item 1 */}
+              <div className={`faq-item ${activeFAQIndex === 0 ? "active" : ""}`}>
+                <button className="faq-question" onClick={() => toggleFAQ(0)}>
                   How can I track my order?
                   <i className="fas fa-chevron-down"></i>
                 </button>
@@ -416,9 +382,9 @@ const countdownTimer = setInterval(() => {
                 </div>
               </div>
 
-              {/* <!-- FAQ Item 2 --> */}
-              <div className="faq-item">
-                <button className="faq-question">
+              {/* FAQ Item 2 */}
+              <div className={`faq-item ${activeFAQIndex === 1 ? "active" : ""}`}>
+                <button className="faq-question" onClick={() => toggleFAQ(1)}>
                   What is your return policy?
                   <i className="fas fa-chevron-down"></i>
                 </button>
@@ -427,9 +393,9 @@ const countdownTimer = setInterval(() => {
                 </div>
               </div>
 
-              {/* <!-- FAQ Item 3 --> */}
-              <div className="faq-item">
-                <button className="faq-question">
+              {/* FAQ Item 3 */}
+              <div className={`faq-item ${activeFAQIndex === 2 ? "active" : ""}`}>
+                <button className="faq-question" onClick={() => toggleFAQ(2)}>
                   How do I contact customer support?
                   <i className="fas fa-chevron-down"></i>
                 </button>
@@ -438,9 +404,9 @@ const countdownTimer = setInterval(() => {
                 </div>
               </div>
 
-              {/* <!-- FAQ Item 4 --> */}
-              <div className="faq-item">
-                <button className="faq-question">
+              {/* FAQ Item 4 */}
+              <div className={`faq-item ${activeFAQIndex === 3 ? "active" : ""}`}>
+                <button className="faq-question" onClick={() => toggleFAQ(3)}>
                   Do you offer international shipping?
                   <i className="fas fa-chevron-down"></i>
                 </button>
@@ -453,16 +419,17 @@ const countdownTimer = setInterval(() => {
         </div>
       </section>
 
+      {/* Footer Section */}
       <footer className="footer">
         <div className="footer-container">
-          {/* <!-- Links Section --> */}
+          {/* Links Section */}
           <div className="footer-links">
             <a href="/privacy-policy">Privacy Policy</a>
             <a href="/terms-conditions">Terms & Conditions</a>
             <a href="/return-policy">Return Policy</a>
           </div>
-      
-          {/* <!-- Social Media Icons --> */}
+
+          {/* Social Media Icons */}
           <div className="social-media">
             <a href="https://www.facebook.com/share/1ECYDnjyQ5/?mibextid=wwXIfr" target="_blank" aria-label="Facebook">
               <i className="fab fa-facebook-f"></i>
@@ -477,8 +444,8 @@ const countdownTimer = setInterval(() => {
               <i className="fab fa-linkedin-in"></i>
             </a>
           </div>
-      
-          {/* <!-- Copyright Text --> */}
+
+          {/* Copyright Text */}
           <div className="footer-copyright">
             <p>&copy; 2023 Your E-Commerce Store. All rights reserved.</p>
           </div>
