@@ -124,14 +124,14 @@ export default function Home() {
         <div className="product-grid">
           {/* Product 1 */}
           <div className="product-card">
-            <img src="white-canvas-sneakers-unisex-footwear-fashion.jpg" alt="Product 1" />
+            <img src="recording-human-icon-stereo-wireless.jpg" alt="Product 1" />
             <h3>Wireless Headphones</h3>
             <p className="price">$99.99</p>
             <button className="add-to-cart-btn" onClick={() => addToCart("Wireless Headphones")}>Add to Cart</button>
           </div>
 
           {/* Product 2 */}
-          <div className="product-card">
+          <div className="product-card" id="product-2">
             <img src="smartwatch-screen-digital-device.jpg" alt="Product 2" />
             <h3>Smart Watch</h3>
             <p className="price">$149.99</p>
@@ -147,7 +147,7 @@ export default function Home() {
           </div>
 
           {/* Product 4 */}
-          <div className="product-card">
+          <div className="product-card" id="product-4">
             <img src="white-canvas-sneakers-unisex-footwear-fashion.jpg" alt="Product 4" />
             <h3>White Shoes</h3>
             <p className="price">$59.99</p>
@@ -155,7 +155,7 @@ export default function Home() {
           </div>
 
           {/* Product 5 */}
-          <div className="product-card">
+          <div className="product-card" id="product-5">
             <img src="casual-white-blouse-women-rsquo-s-fashion.jpg" alt="Product 5" />
             <h3>White Shirt</h3>
             <p className="price">$49.99</p>
@@ -169,16 +169,20 @@ export default function Home() {
         <h2>Men's Fashion Categories</h2>
         <div className="category-grid">
           {/* Category 1 */}
-          <div className="category-card">
-            <i className="fas fa-tshirt"></i>
-            <h3>T-Shirts</h3>
-          </div>
+          <a href="#product-5">
+            <div className="category-card">
+              <i className="fas fa-tshirt"></i>
+              <h3>T-Shirts</h3>
+            </div>
+          </a>
 
           {/* Category 2 */}
-          <div className="category-card">
-            <i className="fas fa-shoe-prints"></i>
-            <h3>Shoes</h3>
-          </div>
+          <a href="#product-4">
+            <div className="category-card">
+              <i className="fas fa-shoe-prints"></i>
+              <h3>Shoes</h3>
+            </div>
+          </a>
 
           {/* Category 3 */}
           <div className="category-card">
@@ -339,7 +343,7 @@ export default function Home() {
               <small>Seconds</small>
             </div>
           </div>
-          <a href="#" className="shop-now-btn">Shop Now</a>
+          <a href="#featured-products" className="shop-now-btn">Shop Now</a>
         </div>
       </section>
 
