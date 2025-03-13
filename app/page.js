@@ -1,6 +1,7 @@
  "use client"
 import Image from "next/image";
 import { useRef } from "react";
+import { useEffect } from "react";
 
 <Image
       src="/pair-man-woman-wearing-glasses-carried-lots-paper-bags-shopping.jpg"
@@ -11,22 +12,64 @@ import { useRef } from "react";
 
 export default function Home() {
 
-  const mobileMenu = document.getElementById('mobile-menu');
-  const navLinks = document.getElementById('nav-links');
+  useEffect(() => {
+    const mobileMenu = document.getElementById("mobile-menu");
+    const navLinks = document.getElementById("nav-links");
 
-  mobileMenu.addEventListener('click', () => {
-    navLinks.classList.toggle('active');
-  });
+    if (mobileMenu && navLinks) {
+      mobileMenu.addEventListener("click", () => {
+        navLinks.classList.toggle("hidden");
+      });
+    }
+
+    // Cleanup function to remove event listener when component unmounts
+    return () => {
+      if (mobileMenu) {
+        mobileMenu.removeEventListener("click", () => {
+          navLinks.classList.toggle("hidden");
+        });
+      }
+    };
+  }, []); // Empty dependency array to run only once
 
   // FAQ Accordion Functionality
-  const faqItems = document.querySelectorAll('.faq-item');
+  // const faqItems = document.querySelectorAll('.faq-item');
 
-  faqItems.forEach((item) => {
-    const question = item.querySelector('.faq-question');
-    question.addEventListener('click', () => {
-      item.classList.toggle('active');
+  // faqItems.forEach((item) => {
+  //   const question = item.querySelector('.faq-question');
+  //   question.addEventListener('click', () => {
+  //     item.classList.toggle('active');
+  //   });
+  // });
+
+  useEffect(() => {
+    const faqItems = document.querySelectorAll(".faq-item");
+
+    faqItems.forEach((item) => {
+      const question = item.querySelector(".faq-question");
+      const answer = item.querySelector(".faq-answer");
+
+      if (question && answer) {
+        question.addEventListener("click", () => {
+          answer.classList.toggle("hidden");
+        });
+      }
     });
-  });
+
+    // Cleanup function to remove event listeners when the component unmounts
+    return () => {
+      faqItems.forEach((item) => {
+        const question = item.querySelector(".faq-question");
+        const answer = item.querySelector(".faq-answer");
+        if (question) {
+          question.removeEventListener("click", () => {
+            answer.classList.toggle("hidden");
+          });
+        }
+      });
+    };
+  }, []); // Runs only once after component mounts
+
 
   const sliderRef = useRef(null);
 
@@ -343,15 +386,15 @@ const countdownTimer = setInterval(() => {
             <h3>Get in Touch</h3>
             <form>
               <div className="form-group">
-                <label for="name">Name</label>
+                <label htmlFor="name">Name</label>
                 <input type="text" id="name" name="name" placeholder="Enter your name" required/>
               </div>
               <div className="form-group">
-                <label for="email">Email</label>
+                <label htmlFor="email">Email</label>
                 <input type="email" id="email" name="email" placeholder="Enter your email" required/>
               </div>
               <div className="form-group">
-                <label for="message">Message</label>
+                <label htmlFor="message">Message</label>
                 <textarea id="message" name="message" placeholder="Enter your message" rows="5" required></textarea>
               </div>
               <button type="submit" className="submit-btn">Submit</button>
@@ -441,9 +484,6 @@ const countdownTimer = setInterval(() => {
           </div>
         </div>
       </footer>
-      
-      <script src="script.js"></script>
-      <script src="countdown.js"></script>
     </div>
   );
 }
