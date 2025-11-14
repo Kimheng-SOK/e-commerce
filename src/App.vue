@@ -1,22 +1,51 @@
 <template>
   <div class="container">
     <!-- Category Section -->
-    <div class="category_list" role="list">
-      <CategoryComponent v-for="item in category_list" :key="item.name" :image_path="item.img" :name="item.name"
-        :stock="item.stock" :bg_color="item.bg_color" :hover="item.hover" />
+    <div class="category_list">
+      <div v-for="(category, index) in categories" :key="category.id || category.name || index" class="category_item" role="list">
+        <CategoryComponent
+          :title="category.name"
+          :itemCount="category.productCount"
+          :bgColor="category.color"
+          :imageSrc="category.image"
+        />
+      </div>
     </div>
 
     <!-- Promotions Section -->
-    <div class="poster_list">
-      <PromotionComponent v-for="promotion in promotion_list" :key="promotion.img" :image_path="promotion.img"
-        :label="promotion.label" :btn_color="promotion.btn_color" :bg_color="promotion.bg_color" />
+    <div class="promotion_list">
+      <div v-for="(promotion, index) in promotions" :key="promotion.id || promotion.title || index" class="promotion_item" role="list">
+        <PromotionComponent
+          :label="promotion.title"
+          :btn_color="promotion.buttonColor"
+          :bgColor="promotion.color"
+          :imageSrc="promotion.image"
+        />
+      </div>
     </div>
   </div>
 </template>
 
 <script lang="ts">
+import axios from 'axios'
 import CategoryComponent from './components/CategoryComponent.vue'
 import PromotionComponent from './components/PromotionComponent.vue'
+
+interface Category {
+  id?: number | string
+  name?: string
+  productCount?: number
+  color?: string
+  image?: string
+}
+
+interface Promotion {
+  id?: number | string
+  title?: string
+  buttonColor?: string
+  color?: string
+  image?: string
+}
 
 export default {
   name: 'App',
@@ -27,53 +56,41 @@ export default {
 
   data() {
     return {
-      category_list: [
-        { img: '/cat-1.png', name: 'Hamburger', stock: 10, bg_color: '#E8F9EF', hover: '#c8f1dc' },
-        { img: '/cat-2.png', name: 'Peach', stock: 15, bg_color: '#E8F9EF', hover: '#c8f1dc' },
-        {
-          img: '/cat-3.png',
-          name: 'Organic Kiwi',
-          stock: 8,
-          bg_color: '#FFF0E6',
-          hover: '#ffd8c2',
-        },
-        { img: '/cat-4.png', name: 'Red Apple', stock: 20, bg_color: '#EAFEEC', hover: '#d4f8da' },
-        { img: '/cat-5.png', name: 'Snack', stock: 5, bg_color: '#FFECEF', hover: '#ffd6dc' },
-        { img: '/cat-6.png', name: 'Black plum', stock: 12, bg_color: '#FFF8E7', hover: '#ffefc8' },
-        { img: '/cat-7.png', name: 'Vegetables', stock: 7, bg_color: '#F1EDFF', hover: '#e2d9ff' },
-        { img: '/cat-8.png', name: 'Headphone', stock: 10, bg_color: '#EBFAEE', hover: '#d5f4dc' },
-        {
-          img: '/cat-9.png',
-          name: 'Cake & Milk',
-          stock: 24,
-          bg_color: '#EAF6FF',
-          hover: '#d2ecff',
-        },
-        { img: '/cat-10.png', name: 'Orange', stock: 34, bg_color: '#FFF3E0', hover: '#ffe3b8' },
-      ],
-
-      promotion_list: [
-        {
-          img: '/promotion1.jpg',
-          label: 'The best Organic Products Online Shop Now',
-          btn_color: '#FDC040',
-          bg_color: '#E7EAF3',
-        },
-        {
-          img: '/promotion2.png',
-          label: 'Make your Breakfast Healthy and Easy',
-          btn_color: '#3BB77E',
-          bg_color: '#F3E8E8',
-        },
-        {
-          img: '/promotion3.jpg',
-          label: 'Everyday Fresh & Clean with Our Products',
-          btn_color: '#3BB77E',
-          bg_color: '#F0E8D5',
-        },
-      ],
+      categories: [] as Category[],
+      promotions: [] as Promotion[], 
     }
   },
+
+  mounted() {
+    this.fetchCategories()
+    this.fetchPromotions()
+  },
+
+  methods: {
+      async fetchCategories() {
+        try {
+          const response = await axios.get(
+            "http://localhost:3000/api/categories"
+          );
+          this.categories = response.data;
+          console.log(response.data);
+        } catch (error) {
+          console.error("Error fetching categories:", error);
+        }
+      },
+
+      async fetchPromotions() {
+      try {
+        const response = await axios.get(
+          "http://localhost:3000/api/promotions"
+        );
+        this.promotions = response.data;
+        console.log(response.data);
+      } catch (error) {
+        console.error("Error fetching promotions:", error);
+      }
+    },
+   },
 }
 </script>
 
@@ -81,54 +98,20 @@ export default {
 /* Container */
 .container {
   width: 100%;
-  height: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: start;
-  align-items: start;
-  gap: 32px;
-  padding: 24px;
-  box-sizing: border-box;
+  gap: 20px;
 }
 
+.promotion_list,
 .category_list {
   display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  gap: 16px;
-  flex-wrap: nowrap;
-  padding-bottom: 8px;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
+  gap: 15px;
+
 }
 
-.category_list>* {
-  flex-shrink: 0;
-  min-width: 160px;
-  scroll-snap-align: start;
-}
-
-.poster_list {
-  display: flex;
-  flex-direction: row;
-  overflow-x: auto;
-  scroll-behavior: smooth;
-  gap: 24px;
-  flex-wrap: nowrap;
-  padding-bottom: 8px;
-  -webkit-overflow-scrolling: touch;
-  scroll-snap-type: x mandatory;
-}
-
-.poster_list>* {
-  flex-shrink: 0;
-  min-width: 300px;
-  scroll-snap-align: start;
-}
-
-.category_list::-webkit-scrollbar,
-.poster_list::-webkit-scrollbar {
-  display: none;
+.categories_item,
+.promotion_item {
+  width: auto;
 }
 </style>
