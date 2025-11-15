@@ -2,7 +2,7 @@
   <div class="container">
     <!-- Category Section -->
     <div class="category_list">
-      <div v-for="(category, index) in categories" :key="category.id || category.name || index" class="category_item" role="list">
+      <div v-for="category in categories" :key="category.id || category.name || index" class="category_item" role="list">
         <CategoryComponent
           :title="category.name"
           :itemCount="category.productCount"
@@ -14,7 +14,7 @@
 
     <!-- Promotions Section -->
     <div class="promotion_list">
-      <div v-for="(promotion, index) in promotions" :key="promotion.id || promotion.title || index" class="promotion_item" role="list">
+      <div v-for="promotion in this.promotions" :key="promotion.id || promotion.title" class="promotion_item" role="list">
         <PromotionComponent
           :label="promotion.title"
           :btn_color="promotion.buttonColor"
@@ -27,25 +27,10 @@
 </template>
 
 <script lang="ts">
-import axios from 'axios'
 import CategoryComponent from './components/CategoryComponent.vue'
 import PromotionComponent from './components/PromotionComponent.vue'
-
-interface Category {
-  id?: number | string
-  name?: string
-  productCount?: number
-  color?: string
-  image?: string
-}
-
-interface Promotion {
-  id?: number | string
-  title?: string
-  buttonColor?: string
-  color?: string
-  image?: string
-}
+import { mapState } from 'pinia';
+import { useProductStore } from './stores/productStore';
 
 export default {
   name: 'App',
@@ -54,43 +39,34 @@ export default {
     PromotionComponent,
   },
 
-  data() {
+  setup() {
+    const productStore = useProductStore()
+
+    productStore.fetchCategories()
+    productStore.fetchPromotions()
+    productStore.fetchProducts?.()
+
     return {
-      categories: [] as Category[],
-      promotions: [] as Promotion[], 
+      productStore,
+      categories: productStore.categories,
+      promotions: productStore.promotions
     }
   },
 
-  mounted() {
-    this.fetchCategories()
-    this.fetchPromotions()
+  data() {
+    return {
+      currentGroupName: 'Group A'
+    }
   },
 
-  methods: {
-      async fetchCategories() {
-        try {
-          const response = await axios.get(
-            "http://localhost:3000/api/categories"
-          );
-          this.categories = response.data;
-          console.log(response.data);
-        } catch (error) {
-          console.error("Error fetching categories:", error);
-        }
+  computed: {
+    ...mapState (useProductStore, {
+      popularProducts: 'getProductsByGroup',
+      categories(store) {
+        return this.store.getCategoriesByGroup(this.currentGroupName)
       },
-
-      async fetchPromotions() {
-      try {
-        const response = await axios.get(
-          "http://localhost:3000/api/promotions"
-        );
-        this.promotions = response.data;
-        console.log(response.data);
-      } catch (error) {
-        console.error("Error fetching promotions:", error);
-      }
-    },
-   },
+    })
+  },
 }
 </script>
 
