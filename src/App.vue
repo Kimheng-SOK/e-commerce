@@ -13,7 +13,12 @@
 
     <!-- Categories Section -->
     <section class="category_list">
-      <div v-for="category in categories" :key="category.id || category.name" class="category_item" role="list">
+      <div 
+      class="category_item"
+      v-for="category in categoryByGroup(selectedCategoryByGroup)" 
+      :key="category.id || category.name" 
+      role="listitem"
+      >
         <CategoryComponent
           :title="category.name"
           :itemCount="category.productCount"
@@ -47,12 +52,15 @@
 
     <!-- Products Section -->
      <section class="product_list w-full max-w-7xl mx-auto">
-      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-6 px-6 py-4 justify-items-center">
-        <div class="product_item w-full flex justify-center" v-for="product in popularProducts" :key="product.id || product.name" role="listitem">
+      <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 px-6 py-4 justify-items-center">
+        <div 
+        class="product_item relative w-full max-w-sm bg-white p-6 rounded-2xl border-3 border-gray-500 hover:border-green-300 shadow-xs flex flex-col items-center justify-end" 
+        v-for="product in productByGroup(selectedProductsByGroup)" 
+        :key="product.id || product.name" 
+        role="listitem">
           <ProductComponent
             :item="product"
             :productQuantities="productQuantities"
-            :rating="product.rating || 0"
             @add-to-cart="addItemToCart"
             @update-quantity="updateQuantity"
           />
@@ -71,6 +79,7 @@ import ProductComponent from './components/ProductComponent.vue';
 import { onMounted, reactive } from 'vue';
 import { mapState, storeToRefs } from 'pinia';
 import { useProductStore } from './stores/productStore';
+import { server } from 'typescript';
 
 export default {
   name: 'App',
@@ -87,6 +96,7 @@ export default {
 
     // reactive Map to track quantities for products in the parent
     const productQuantities = reactive(new Map<string, number>())
+    const categoryQuantities = reactive(new Map<string, number>())
 
     function addItemToCart(productName: string) {
       productQuantities.set(productName, 1)

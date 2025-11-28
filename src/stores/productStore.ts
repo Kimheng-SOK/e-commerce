@@ -51,11 +51,21 @@ export const useProductStore = defineStore('product', {
     }),
     getters: {
         getCategoriesByGroup: (state) => {
-            return (groupName: String): Category[] => state.categories.filter   ((category) => category.group === groupName)
+            return (groupName: String): Category[] => {
+                if (groupName === 'All') {
+                    return state.categories
+                }
+                return state.categories.filter((category) => category.group === groupName)
+            }
         },
 
         getProductsByGroup: (state) => {
-            return (groupName: string): Product[] => state.products.filter((product) => product.group === groupName)
+            return (groupName: string): Product[] => {
+                if (groupName === 'All') {
+                    return state.products
+                }
+                return state.products.filter((product) => product.group === groupName)
+            }
         },
 
         getProductsByCategory: (state) => {
@@ -102,7 +112,37 @@ export const useProductStore = defineStore('product', {
         async fetchProducts() {
             try {
                 const response = await axios.get('http://localhost:3000/api/products');
-                this.products = response.data
+                const raw = response.data || [];
+
+                const parseFirstImage = (rawImg: any): string => {
+                    if (!rawImg) return '';
+                    // already an array
+                    if (Array.isArray(rawImg) && rawImg.length) return String(rawImg[0]);
+                    if (typeof rawImg === 'string') {
+                        // try JSON string like '["uploads\\product\\...png"]'
+                        try {
+                            const parsed = JSON.parse(rawImg);
+                            if (Array.isArray(parsed) && parsed.length) return String(parsed[0]);
+                        } catch (e) {
+                            // not JSON — continue
+                        }
+                        // comma-separated list "a,b"
+                        const str = rawImg;
+                        if (str.includes(',')) {
+                            const firstPart = str.split(',')[0] ?? '';
+                            return firstPart.trim();
+                        }
+                        return str;
+                    }
+                    // fallback to string coercion
+                    return String(rawImg);
+                };
+
+                this.products = raw.map((p: any) => ({
+                    ...p,
+                    image: normalizePath(parseFirstImage(p.image ?? p.images ?? p.file ?? p.files))
+                }));
+
                 console.log("Products:", this.products);
             } catch(error) {
                 console.log(error);
@@ -122,4 +162,4 @@ export const useProductStore = defineStore('product', {
             }
         },
     }
-})   
+})
