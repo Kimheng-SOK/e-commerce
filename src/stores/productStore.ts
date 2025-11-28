@@ -24,30 +24,42 @@ interface Product {
   size?: string
   price?: number
   promotionAsPercentage?: number
-  categoryId: string
+  categoryId: number
   group?: string
   countSold?: number
+  image: string
 }
 
+function normalizePath(path?: string) {
+    if (!path) return ''
+    const s = String(path)
+
+    if (/^https?:\/\//.test(s) || s.startsWith('/')) return s
+    const base = 'http://localhost:3000'
+
+    if (s.startsWith(base)) return `${base}${s}`
+
+    return `${base}/${s.replace(/^\/+/, '')}`
+}
 
 export const useProductStore = defineStore('product', {
     state: () => ({
-        groups: [] as String[],
+        groups: [] as string[],
         promotions: [] as Promotion[],
         categories: [] as Category[],
         products: [] as Product[]
     }),
     getters: {
         getCategoriesByGroup: (state) => {
-            return (groupName: String) => state.categories.find((category) => category.group === groupName)
+            return (groupName: String): Category[] => state.categories.filter   ((category) => category.group === groupName)
         },
 
         getProductsByGroup: (state) => {
-            return (groupName: String) => state.products.find((product) => product.group === groupName)
+            return (groupName: string): Product[] => state.products.filter((product) => product.group === groupName)
         },
 
         getProductsByCategory: (state) => {
-           return (categoryId: string) => state.products.filter((product) => product.categoryId === categoryId)
+           return (categoryId: number): Product[] => state.products.filter((product) => product.categoryId === categoryId)
         },
 
         getPopularProducts: (state) => {
@@ -60,10 +72,14 @@ export const useProductStore = defineStore('product', {
                 const response = await axios.get(
                 "http://localhost:3000/api/categories"
                 );
-                this.categories = response.data;
-                console.log(response.data);
+                this.categories = (response.data || []).map((c:any) => ({
+                    ...c, 
+                    image: normalizePath(c.image ?? c.img ?? c.file)
+            }))
+            console.log("Categories:", this.categories);
             } catch (error) {
                 console.error("Error fetching categories:", error);
+                this.categories = [];
             }
             },
 
@@ -72,10 +88,14 @@ export const useProductStore = defineStore('product', {
             const response = await axios.get(
                 "http://localhost:3000/api/promotions"
             );
-            this.promotions = response.data;
-            console.log(response.data);
+            this.promotions = (response.data || []).map((p:any) => ({
+                ...p,
+                image: normalizePath(p.image ?? p.img ?? p.file)
+            }))
+            console.log("Promotions:", response.data);
             } catch (error) {
             console.error("Error fetching promotions:", error);
+            this.promotions = [];
             }
         },
 
@@ -83,10 +103,23 @@ export const useProductStore = defineStore('product', {
             try {
                 const response = await axios.get('http://localhost:3000/api/products');
                 this.products = response.data
-                console.log(response.data)
+                console.log("Products:", this.products);
             } catch(error) {
                 console.log(error);
+                this.products = [];
             }
-        }
-    },
+        },
+
+        async fetchGroups() {
+            try {
+                const response = await axios.get("http://localhost:3000/api/groups");
+                const data = Array.isArray(response.data) ? response.data.map(String) : [];
+                this.groups = ['All', ...data];
+                console.log("Groups:", response.data);
+            } catch (error) {
+                console.error("Error fetching groups:", error);
+                this.groups = ['All'];
+            }
+        },
+    }
 })   

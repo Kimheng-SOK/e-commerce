@@ -1,5 +1,5 @@
 <template>
-    <button id="btn" :style="{ background: bgColor, '--hover': 'blue' }">
+    <button id="btn" :style="{ background: bgColor, borderColor: bgColor }">
         <p>{{label}}</p>
         <span :style="{ display: 'flex', alignItems: 'center', justifyContent: 'center' }"> 
             <img src="/right-arrow.png" alt="Right Arrow" style="width:12px; height:12px;">
@@ -34,9 +34,16 @@ export default {
         justify-content: center;
         gap            : 6px;
         padding        : 12px 8px;
-        border         : none;
+        border         : 0.2px solid;
         transition     : background 0.3s ease;
         color: white;
         font-size: small;
     }
+
+    #btn:hover {
+        transform: scale(0.95);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    }
+
+
 </style>

@@ -5,7 +5,7 @@
                 <p class="poster_label">{{ label }}</p>
                 <ButtonComponent :bgColor="btn_color" @click="shopNow(label)" />
             </div>
-            <img class="poster_img" :src="`http://localhost:3000/${imageSrc}`" alt="Poster image" />
+            <img class="poster_img" :src="imageSrc" alt="Poster image" />
         </div>
     </div>
 </template>

@@ -1,7 +1,7 @@
 <template>
-  <div class="category_list">
+  <div class="category_card">
     <button role="menuitem" type="button" class="category_btn" :style="{ backgroundColor: bgColor }">
-      <img class="category_img" :src="`http://localhost:3000/${imageSrc}`" alt="Category image">
+      <img class="category_img" :src="imageSrc" alt="Category image">
       <span class="category_name">{{ title }}</span>
       <span class="category_count">{{ itemCount }} items</span>
     </button>
@@ -17,38 +17,52 @@
         bgColor: String,
         imageSrc: String,
     },
-    // mounted() {
-    //   console.log("imageSrc", this.imageSrc)
-    // }
+
+    mounted() {
+      // console.log("Category imageSrc", this.imageSrc)
+    }
   }  
 </script>
 
 <style scoped>
-.category_list {
+.category_card {
+  width: 100%;
   display: flex;
-  flex-direction: row;
+  /* flex-direction: row; */
   overflow-x: auto;
+  align-items: center;
   scrollbar-width: none;
   gap: 10px;
   margin-bottom: 50px;
 }
 
 .category_btn {
-  padding: 5px;
+  padding: 8px;
   width: 100px;
-  height: 130px;
+  height: 140px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   background: var(--bg);
-  border: 1px solid rgba(0, 0, 0, 0.06);
-  border-radius: 8px;
-  transition: background 0.3s;
+  border-radius: 10px;
+  border: 0.3px solid rgba(99, 100, 99, 0.9);;
+  transition: transform 200ms cubic-bezier(.2,.8,.2,1), box-shadow 200ms cubic-bezier(.2,.8,.2,1), border-color 200ms;
+  will-change: transform, box-shadow, border-color;
+  cursor: pointer;
 }
 
-.category_btn:hover {
-  background: var(--hover);
+.category_btn:hover,
+.category_btn:focus-visible {
+  transform: scale(0.9);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 14), 0 6px 12px rgba(238, 234, 234, 0.06);
+  border-color: rgba(99, 100, 99, 0.9);
+}
+
+.category_btn:active {
+  transform: scale(0.95);
+  box-shadow: 0 8px 18px rgba(0,0,0,0.10);
+  border-color: rgba(59, 183, 126, 0.75);
 }
 
 .category_img {
