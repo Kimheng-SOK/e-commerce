@@ -2,32 +2,33 @@ import {defineStore} from 'pinia'
 import axios from 'axios'
 
 interface Promotion {
-  id?: number | string
-  title?: string
-  buttonColor?: string
-  color?: string
-  image?: string
+    id?: number | string
+    title?: string
+    buttonColor?: string
+    color?: string
+    image?: string
 }
 
 interface Category {
-  id?: number | string
-  name?: string
-  productCount?: number
-  color?: string
-  image?: string
-  group?:String
+    id?: number | string
+    name?: string
+    productCount?: number
+    color?: string
+    image?: string
+    group?: string
 }
 
 interface Product {
-  name?: string
-  rating?: number
-  size?: string
-  price?: number
-  promotionAsPercentage?: number
-  categoryId: number
-  group?: string
-  countSold?: number
-  image: string
+    id: number | string
+    name?: string
+    rating?: number
+    size?: string
+    price?: number
+    promotionAsPercentage?: number
+    categoryId: number
+    group?: string
+    countSold?: number
+    image: string
 }
 
 function normalizePath(path?: string) {
