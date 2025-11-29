@@ -1,7 +1,5 @@
 <template>
   <main class="container">
-    <NavBar/>
-
     <!-- Featured Categories Section -->
     <section class="flex flex-row justify-between items-center mt-10 mb-5 w-full">
       <MenuComponent
@@ -76,19 +74,16 @@
 import CategoryComponent from '../components/CategoryComponent.vue'
 import PromotionComponent from '../components/PromotionComponent.vue'
 import ProductComponent from '../components/ProductComponent.vue'
-// @ts-ignore: missing declaration for .vue SFCs in this project
-import NavBar from '../components/Navbar.vue'
 import { onMounted, reactive } from 'vue'
 import { mapState, storeToRefs } from 'pinia'
 import { useProductStore } from '../stores/productStore'
 
 export default {
-  name: 'HomeView',
+  name: 'home',
   components: {
     CategoryComponent,
     PromotionComponent,
     ProductComponent,
-    NavBar
   },
 
   setup() {
