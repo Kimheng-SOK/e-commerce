@@ -1,16 +1,15 @@
 <template>
-    <div class="poster_list" role="list">
-        <div class="poster_item" role="listItem" :style="{ backgroundColor: bgColor }">
-            <div class="poster_main" >
-                <p class="poster_label">{{ label }}</p>
-                <ButtonComponent :bgColor="btn_color" @click="shopNow(label)" />
-            </div>
-            <img class="poster_img" :src="imageSrc" alt="Poster image" />
-        </div>
-    </div>
+  <div class="poster_item" role="listItem" :style="{ backgroundColor: bgColor }">
+      <div class="poster_main" >
+          <p class="poster_label">{{ label }}</p>
+          <ButtonComponent :bgColor="btn_color" @click="onClick(String(prod_id))" class="btn" />
+      </div>
+      <img class="poster_img" :src="imageSrc" alt="Poster image" />
+  </div>
 </template>
 
 <script lang="ts">
+import router from '@/router';
 import ButtonComponent from './ButtonComponent.vue';
 
 export default {
@@ -22,35 +21,45 @@ export default {
         label: String,
         btn_color: String,
         imageSrc: String,
-        bgColor: String
+        bgColor: String,
+        prod_id: [String, Number]
     },
 
     methods: {
-        shopNow(promotion: String | undefined) {
-            alert("Let's shop: " + promotion);
-        }
+        // shopNow(promotion: String | undefined) {
+        //     alert("Let's shop: " + promotion);
+        // }
+
+      shopNow(promotion: String | undefined) {
+          alert("Let's shop: " + promotion);
+      },
+
+      onClick(prod_id: string | number) {
+        router.push({ name: 'Product', params: { productId: prod_id } });
+        console.log('Promotion clicked, product id:', prod_id);
+      }
     }
 };
 </script>
 
 <style scoped>
-.poster_list {
+/* .poster_card {
   display: flex;
   flex-direction: row;
-  flex-wrap: wrap; 
+  flex-wrap: wrap;
   overflow-x: auto;
   scroll-behavior: smooth;
   scrollbar-width: none;
   gap: 24px;
   margin-top: 24px;
-}
+} */
 
 .poster_item {
   display: flex;
   flex-direction: row;
   align-items: center;
   height: 200px;
-  width: 380px;
+  width: 480px;
   min-width: 300px;
   background: white;
   border-radius: 8px;
@@ -62,10 +71,9 @@ export default {
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex: 1;
+  align-items: last baseline;
   margin-left: 24px;
 }
-
 
 .poster_img {
   max-width: 200px;
@@ -73,7 +81,7 @@ export default {
 }
 
 .poster_label {
-  font-size: 16px;
+  font-size: 24px;
   font-weight: bold;
   color: #181818;
   margin-bottom: 16px;

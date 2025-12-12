@@ -1,7 +1,13 @@
 <template>
-  <main class="container">
+  <div class="container">
+    <!-- ShowCase component -->
+    <section class="showcase_section">
+      <ShowCaseComponent />
+    </section>
+
+
     <!-- Featured Categories Section -->
-    <section class="flex flex-row justify-between items-center mt-10 mb-5 w-full">
+    <section class="menu-feature">
       <MenuComponent
         :categories="'Featured Categories'"
         :groupName="groups"
@@ -13,10 +19,10 @@
 
     <!-- Categories Section -->
     <section class="category_list">
-      <div 
+      <div
       class="category_item"
-      v-for="category in categoryByGroup(selectedCategoryByGroup)" 
-      :key="category.id || category.name" 
+      v-for="category in categoryByGroup(selectedCategoryByGroup)"
+      :key="category.id || category.name"
       role="listitem"
       >
         <CategoryComponent
@@ -24,6 +30,7 @@
           :itemCount="category.productCount"
           :bgColor="category.color"
           :imageSrc="category.image"
+          :cate_id="category.id"
         />
       </div>
     </section>
@@ -36,12 +43,13 @@
           :btn_color="promotion.buttonColor"
           :bgColor="promotion.color"
           :imageSrc="promotion.image"
+          :prod_id="promotion.id"
         />
       </div>
     </section>
 
     <!-- Popular Products Section -->
-    <section class="flex flex-row justify-between items-center mt-10 mb-5 w-full">
+    <section class="menu-feature">
       <MenuComponent
         :categories="'Popular Products'"
         :groupName="groups"
@@ -53,30 +61,34 @@
     <!-- Products Section -->
      <section class="product_list w-full max-w-7xl mx-auto">
       <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-5 px-6 py-4 justify-items-center">
-        <div 
-        class="product_item relative w-full max-w-sm bg-white p-6 rounded-2xl border-3 border-gray-500 hover:border-green-300 shadow-xs flex flex-col items-center justify-end" 
-        v-for="product in productByGroup(selectedProductsByGroup)" 
-        :key="product.id || product.name" 
+        <div
+        class="product_item relative w-full max-w-sm bg-white p-6 rounded-2xl border-3 border-gray-500 hover:border-green-300 shadow-xs flex flex-col items-center justify-end"
+        v-for="product in productByGroup(selectedProductsByGroup)"
+        :key="product.id || product.name"
         role="listitem">
           <ProductComponent
             :item="product"
             :productQuantities="productQuantities"
+            :prod_id="Number(product.id)"
             @add-to-cart="addItemToCart"
             @update-quantity="updateQuantity"
           />
         </div>
       </div>
      </section>
-  </main>
+  </div>
 </template>
 
 <script lang="ts">
+import { mapState, storeToRefs } from 'pinia'
 import CategoryComponent from '../components/CategoryComponent.vue'
 import PromotionComponent from '../components/PromotionComponent.vue'
 import ProductComponent from '../components/ProductComponent.vue'
+import MenuComponent from '@/components/MenuComponent.vue'
+import ShowCaseComponent from '../components/ShowCaseComponent.vue'
 import { onMounted, reactive } from 'vue'
-import { mapState, storeToRefs } from 'pinia'
 import { useProductStore } from '../stores/productStore'
+import router from '@/router'
 
 export default {
   name: 'home',
@@ -84,6 +96,8 @@ export default {
     CategoryComponent,
     PromotionComponent,
     ProductComponent,
+    ShowCaseComponent,
+    MenuComponent,
   },
 
   setup() {
@@ -104,6 +118,7 @@ export default {
       else productQuantities.delete(name)
     }
 
+
     onMounted(() => {
       productStore.fetchGroups()
       productStore.fetchCategories()
@@ -119,14 +134,14 @@ export default {
       groups,
       productQuantities,
       addItemToCart,
-      updateQuantity
+      updateQuantity,
     }
   },
 
   data() {
     return {
       selectedCategoryByGroup: "All",
-      selectedProductsByGroup:  "All" 
+      selectedProductsByGroup:  "All"
     }
   },
 
@@ -138,18 +153,38 @@ export default {
       categoryByGroup: (state) => state.getCategoriesByGroup,
     })
   },
+
+  // methods: {
+  //   async onClick(id: string | number){
+  //     await router.push({ name: "category", params: { categoryId: id }})
+  //     console.log("Navigated to category:", id)
+  //   }
+  // }
 }
 </script>
 
 <style scoped>
-/* Container */
+
 .container {
-  width: 100%;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.showcase_section {
+  width: 100%;
+  padding: 0 32px;
+}
+
+.menu-feature {
+  width: 100%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 16px 32px;
 }
 
 .promotion_list,
@@ -158,14 +193,8 @@ export default {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
+  gap: 5px;
+  padding: 16px 32px;
 }
 
-.category_item {
-  width: auto;
-  height: 140px;
-}
-.promotion_item {
-  width: auto;
-}
 </style>

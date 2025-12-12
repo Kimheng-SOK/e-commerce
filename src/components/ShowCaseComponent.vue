@@ -1,15 +1,12 @@
 <template>
   <div class="showcase">
+    <img src="../../public/sub-bg.png" alt="sub-bg" class="showcase-bg">
     <div class="showcase-content">
       <h2 class="showcase-title">Don’t miss amazing grocery deals</h2>
       <div class="showcase-desc">Sign up for the daily newsletter</div>
       <form class="newsletter-form" @submit.prevent="subscribe">
         <div class="input-group">
-          <span class="input-icon">
-            <svg width="18" height="18" fill="none" viewBox="0 0 24 24">
-              <path d="M4 4h16v16H4V4zm2 4l6 5 6-5" stroke="#888" stroke-width="2" fill="none"/>
-            </svg>
-          </span>
+          <component :is="iconPaperPlane" class="input-icon" />
           <input
             v-model="email"
             type="email"
@@ -21,11 +18,12 @@
         <button type="submit" class="subscribe-btn">Subscribe</button>
       </form>
     </div>
-    <img src="/showcase.png" alt="Showcase" class="showcase-img" />
+    <img src="../../public/showcase-item.png" alt="Showcase" class="showcase-img" />
   </div>
 </template>
 
-<script>
+<script lang="ts">
+import iconPaperPlane from '@/assets/IconComponents/icon-paper-plane.vue';
 export default {
   name: "ShowCaseComponent",
   data() {
@@ -39,34 +37,48 @@ export default {
       this.$emit("subscribe", this.email);
       this.email = "";
     }
+  },
+  setup() {
+    return {
+      iconPaperPlane
+    }
   }
 };
 </script>
 
 <style scoped>
 .showcase {
+  width: 100%;
+  height: 400px;
   position: relative;
   display: flex;
+  flex-direction: row;
   align-items: center;
   justify-content: space-between;
-  background: #fdf6e3;
+  background-color: #FDC04033;
   border-radius: 18px;
   overflow: hidden;
-  min-height: 240px;
-  padding: 32px 48px;
   box-sizing: border-box;
-  width: 100%;
-  max-width: 1000px;
-  margin: 32px auto;
-  /* border for indication only, remove color if not needed */
   border: 2px solid transparent;
 }
+
+.showcase-bg {
+  position: absolute;
+  top: 0;
+  left: 0;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
 .showcase-content {
-  max-width: 420px;
+  max-width: 770px;
+  margin-left: 50px;
   z-index: 2;
 }
 .showcase-title {
-  font-size: 2.2rem;
+  font-size: 4rem;
   font-weight: 700;
   color: #253d4e;
   margin-bottom: 12px;
@@ -120,10 +132,8 @@ export default {
   background: #168a52;
 }
 .showcase-img {
-  height: 180px;
-  object-fit: contain;
-  z-index: 1;
-  margin-left: 32px;
+  height: 100%;
+  z-index: 2;
   border-radius: 12px;
   background: none;
 }
@@ -136,7 +146,6 @@ export default {
   .showcase-img {
     margin-left: 0;
     margin-top: 24px;
-    width: 100%;
     height: auto;
   }
 }

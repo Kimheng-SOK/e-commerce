@@ -2,60 +2,83 @@
   <nav class="navbar">
     <div class="navbar-top">
         <div class="navbar-left">
-            <div class="logo">
-            <img src="/logo.png" alt="Melon" />
+          <router-link to="/" class="logo">
+              <img src="/logo.png" alt="Melon" />
+          </router-link>
+          <SearchBoxComponent class="searchbox" />
         </div>
-        <SearchBoxComponent class="searchbox" />
-      </div>
       <div class="navbar-icons">
-        <div class="icon-item">
-          <svg width="24" height="24" fill="none" viewBox="0 0 24 24">
-            <circle cx="12" cy="8" r="4" stroke="#3a4d39" stroke-width="2"/>
-            <path d="M4 20c0-3.333 3.333-6 8-6s8 2.667 8 6" stroke="#3a4d39" stroke-width="2"/>
-          </svg>
-          <span>Account</span>
-        </div>
-        <div class="icon-item"><span>Compare</span></div>
-        <div class="icon-item"><span>Wishlist</span></div>
-        <div class="icon-item"><span>Cart</span></div>
+        <MenuItemComponent :icon="iconAcc" label="Account" class="icon-item"/>
+        <MenuItemComponent :icon="iconCompare" label="Compare" class="icon-item"/>
+        <MenuItemComponent :icon="iconHeart" label="Wishlist" class="icon-item"/>
+        <MenuItemComponent :icon="iconCartShop" label="Cart" class="icon-item"/>
       </div>
     </div>
     <div class="navbar-bottom">
-      <button class="browse-btn">Browse All Categories</button>
-      <MenuItemComponent label="Hot Deals" />
-      <MenuItemComponent label="Home" />
-      <MenuItemComponent label="Food" hasDropdown>
-        <div>Fruits</div>
-        <div>Vegetables</div>
-        <div>Meat & Seafood</div>
-      </MenuItemComponent>
-      <MenuItemComponent label="Vegetables" hasDropdown>
-        <div>Leafy</div>
-        <div>Root</div>
-      </MenuItemComponent>
-      <MenuItemComponent label="Drink" />
-      <MenuItemComponent label="Cookies" />
-      <MenuItemComponent label="Meat & Seafood" />
-      <MenuItemComponent label="Bakery" />
+      <!-- <button class="browse-btn">Browse All Categories</button> -->
+      <div style="display: flex; gap:30px;">
+        <MenuItemComponent :icon="iconCategory" label="Browse All categories" hasDropdown class="browse-btn"></MenuItemComponent>
+        <MenuItemComponent :icon="iconFlame" label="Hot Deals" style="display: flex; gap: 6px" />
+        <div class="nav_item">
+          <MenuItemComponent label="Home" />
+          <MenuItemComponent label="Food" hasDropdown>
+            <div>Fruits</div>
+            <div>Vegetables</div>
+            <div>Meat & Seafood</div>
+          </MenuItemComponent>
+          <MenuItemComponent label="Vegetables" hasDropdown>
+            <div>Leafy</div>
+            <div>Root</div>
+          </MenuItemComponent>
+          <MenuItemComponent label="Drink" />
+          <MenuItemComponent label="Cookies" />
+          <MenuItemComponent label="Meat & Seafood" />
+          <MenuItemComponent label="Bakery" />
+        </div>
+      </div>
+
       <div class="support">
-        <div class="support-phone">1900 - 8888</div>
-        <div class="support-desc">24/7 Support Center</div>
+        <component :is="iconHeadset" v-if="iconHeadset" />
+        <div class="support-info">
+          <div class="support-phone">1900 - 8888</div>
+          <div class="support-desc">24/7 Support Center</div>
+        </div>
       </div>
     </div>
   </nav>
 </template>
 
-<script>
-import SearchBoxComponent from '../components/SearchBoxComponent.vue';
-import MenuItemComponent from '../components/MenuItemComponent.vue';
+<script lang="ts">
+import { defineComponent } from 'vue'
+// @ts-ignore: no declaration file for .vue import
+import SearchBoxComponent from '@/components/SearchBoxComponent.vue'
+import MenuItemComponent from '@/components/MenuItemComponent.vue'
+import iconFlame from '@/assets/IconComponents/icon-flame.vue'
+import iconCategory from '@/assets/IconComponents/icon-category.vue'
+import iconHeadset from '@/assets/IconComponents/icon-headset.vue'
+import iconAcc from '@/assets/IconComponents/icon-acc.vue'
+import iconCompare from '@/assets/IconComponents/icon-compare.vue'
+import iconHeart from '@/assets/IconComponents/icon-heart.vue'
+import iconCartShop from '@/assets/IconComponents/icon-cart-shop.vue'
 
-export default {
-  name: "NavBarComponent",
+export default defineComponent({
+  name: "NavBar",
   components: {
     SearchBoxComponent,
-    MenuItemComponent
+    MenuItemComponent,
+  },
+  setup() {
+    return {
+      iconFlame,
+      iconCategory,
+      iconHeadset,
+      iconAcc,
+      iconCompare,
+      iconHeart,
+      iconCartShop,
+    }
   }
-};
+});
 </script>
 
 <style scoped>
@@ -121,17 +144,40 @@ export default {
   background: #f6fff7;
   border-top: 1px solid #d4e9d7;
 }
+.nav_item {
+  /* width: 738px; */
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
 .browse-btn {
-  background: #3a4d39;
+  width: 220px;
+  height: 44px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: #3BB77E;
   color: #fff;
   border: none;
-  border-radius: 4px;
-  padding: 8px 16px;
+  border-radius: 5px;
+  /* padding: 8px 16px; */
   font-size: 15px;
   cursor: pointer;
-  margin-right: 8px;
+  /* margin-right: 8px; */
 }
-.support {
+.browse-btn:hover {
+  background: #3a4d39;
+}
+
+.support{
+  display: flex;
+  align-items: end;
+  margin-left: auto;
+  gap: 6px;
+}
+
+.support-info {
   margin-left: auto;
   text-align: right;
   color: #3a4d39;

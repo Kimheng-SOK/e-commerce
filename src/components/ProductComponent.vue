@@ -1,5 +1,5 @@
 <template>
-  <article class="product-card">
+  <button class="product-card">
     <div class="image-wrap">
       <img :src="item.image" :alt="item.name" class="product-img" />
 
@@ -8,7 +8,7 @@
 
       <!-- Hover overlay with quick actions -->
       <div class="img-overlay">
-        <button class="quick-view" type="button">Quick view</button>
+        <button class="quick-view" type="button" @click="onClick(prod_id)">Quick view</button>
       </div>
     </div>
 
@@ -64,16 +64,18 @@
         </div>
       </div>
     </div>
-  </article>
+  </button>
 </template>
 
 <script lang="ts">
+import router from '@/router';
 import { defineComponent, computed } from 'vue'
 
 export default defineComponent({
   name: 'ProductComponent',
   props: {
     item: { type: Object as () => any, required: true },
+    prod_id: { type: Number, required: true },
     productQuantities: { type: Object as () => any, default: () => new Map() }
   },
   emits: ['add-to-cart', 'update-quantity'],
@@ -120,12 +122,20 @@ export default defineComponent({
       return null
     })
 
+    async function onClick(id: number) {
+      await router.push({ name: 'Product', params: { productId: id } })
+      console.log('Navigated to product:', id)
+    }
+
+
+
     return {
       getQuantity,
       isProductAdded,
       emitAdd,
       onUpdateQuantity,
       formatPrice,
+      onClick,
       badge
     }
   }

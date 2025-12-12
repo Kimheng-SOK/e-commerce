@@ -1,6 +1,7 @@
 <template>
   <div class="menu-item" @mouseenter="hover = true" @mouseleave="hover = false">
-    <span>{{ label }}</span>
+    <component :is="icon" v-if="icon" />
+    <span class="label" >{{ label }}</span>
     <span v-if="hasDropdown" class="arrow">&#9662;</span>
     <div v-if="hasDropdown && hover" class="dropdown">
       <slot></slot>
@@ -8,12 +9,14 @@
   </div>
 </template>
 
-<script>
+<script lang="ts">
 export default {
   name: "MenuItemComponent",
   props: {
     label: { type: String, required: true },
-    hasDropdown: { type: Boolean, default: false }
+    hasDropdown: { type: Boolean, default: false },
+    icon: { type: [Object, Function], default: null },
+
   },
   data() {
     return { hover: false };
@@ -23,7 +26,7 @@ export default {
 
 <style scoped>
 .menu-item {
-  padding: 0 16px;
+  padding: 0 2px;
   font-size: 16px;
   color: #3a4d39;
   cursor: pointer;
@@ -32,12 +35,17 @@ export default {
   align-items: center;
   height: 40px;
 }
+
+.label {
+  size: 16px;
+}
+
 .menu-item:hover {
   background: #f6fff7;
 }
 .arrow {
   margin-left: 6px;
-  font-size: 12px;
+  font-size: 20px;
 }
 .dropdown {
   position: absolute;

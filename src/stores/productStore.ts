@@ -1,7 +1,7 @@
 import {defineStore} from 'pinia'
 import axios from 'axios'
 
-interface Promotion {
+export interface Promotion {
     id?: number | string
     title?: string
     buttonColor?: string
@@ -9,7 +9,7 @@ interface Promotion {
     image?: string
 }
 
-interface Category {
+export interface Category {
     id?: number | string
     name?: string
     productCount?: number
@@ -18,7 +18,7 @@ interface Category {
     group?: string
 }
 
-interface Product {
+export interface Product {
     id: number | string
     name?: string
     rating?: number
@@ -84,7 +84,7 @@ export const useProductStore = defineStore('product', {
                 "http://localhost:3000/api/categories"
                 );
                 this.categories = (response.data || []).map((c:any) => ({
-                    ...c, 
+                    ...c,
                     image: normalizePath(c.image ?? c.img ?? c.file)
             }))
             console.log("Categories:", this.categories);
