@@ -17,10 +17,10 @@ return new class extends Migration
             $table->bigInteger('category_id')->unsigned();
             $table->double('pricing');
             $table->text('description')->nullable();
-            $tablr->jsonb('images')->nullable();
+            $table->jsonb('images')->nullable();
             $table->timestamps();
 
-            $table->foriegn('category_id')->references('id')->on('categories');
+            $table->foreign('category_id')->references('id')->on('categories');
         });
     }
 
