@@ -12,6 +12,7 @@ class CategoryController extends Controller
     }
 
     public function createCategory(Request $request) {
+        abort_unless(auth()->user()->can('categories.create'), 403);
         $category = Category::create($request->all());
         return $category;
     }
@@ -22,6 +23,7 @@ class CategoryController extends Controller
 
 
     public function updateCategory(Request $request, $categoryId) {
+        abort_unless(auth()->user()->can('categories.update'), 403);
         $category = Category::findOrFail($categoryId);
         $category->update($request->all());
         return $category;

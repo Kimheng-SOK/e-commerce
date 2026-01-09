@@ -16,6 +16,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+        abort_unless(auth()->user()->can('profile.view'), 403);
         return view('profile.edit', [
             'user' => $request->user(),
         ]);

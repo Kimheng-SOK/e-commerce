@@ -16,6 +16,7 @@ class ProductController extends Controller
 
 
     public function createProduct(Request $request) {
+        abort_unless(auth()->user()->can('products.create'), 403);
         $product = Product::create($request->all());
         return $product;
     }
@@ -25,6 +26,7 @@ class ProductController extends Controller
     }
 
     public function updateProduct(Request $request, $productId) {
+        abort_unless(auth()->user()->can('products.update'), 403);
         $product = Product::findOrFail($productId);
         $product->update($request->all());
         return $product;
