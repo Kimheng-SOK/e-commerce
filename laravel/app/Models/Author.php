@@ -3,6 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\MorphMany;
+use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Author extends Model
 {
@@ -12,7 +16,7 @@ class Author extends Model
         return $this->belongsTo(User::class);
     }
     
-    public function articles() 
+    public function articles(): HasMany
     {
         return $this->hasMany(Article::class);
     }
