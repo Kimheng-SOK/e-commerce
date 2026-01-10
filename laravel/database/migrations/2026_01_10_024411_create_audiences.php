@@ -13,6 +13,9 @@ return new class extends Migration
     {
         Schema::create('audiences', function (Blueprint $table) {
             $table->id();
+            $table->string('name');
+            $table->foreignId('article_id')->constrained()->onDelete('cascade');
+            $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });
     }
