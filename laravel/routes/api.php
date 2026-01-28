@@ -4,6 +4,9 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\CategoryController;
 use App\Http\Controllers\ProductController;
+use App\Http\Controllers\AuthorController;
+use App\Http\Controllers\ArticleController;
+use App\Http\Controllers\AudienceController;
 
 Route::post('/login', function (Request $request) {
     $request->validate(['email'=>'required|email','password'=>'required']);
@@ -42,3 +45,14 @@ Route::controller(ProductController::class)->prefix('products')->group(function 
     Route::delete('/{productId}', 'deleteProduct');
     Route::get('/{categoryId}/products', 'getProductsByCategory');
 });
+
+Route::post('/authors', [AuthorController::class, 'createAuthor']);
+Route::get('/authors', [AuthorController::class, 'fetchAuthors']);
+
+Route::post('/articles', [ArticleController::class, 'createArticle']);
+
+Route::post('/audiences', [AudienceController::class, 'createAudience']); 
+
+Route::post('/audiences/subscribe', [AudienceController::class, 'subscribe']);
+
+Route::post('/comments', [CommentController::class, 'createComment']);

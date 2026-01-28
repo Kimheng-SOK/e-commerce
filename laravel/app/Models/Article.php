@@ -9,14 +9,16 @@ use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class Article extends Model
 {
+    protected $fillable = ['author_id', 'name'];
+
     public function author() 
     {
         return $this->belongsTo(Author::class);
     }
 
-    public function audiences() : HasMany
+    public function audiences() : BelongsToMany
     {
-        return $this->hasMany(Audience::class);
+        return $this->belongsToMany(Audience::class, 'article_audience');
     }
 
     public function comments(): MorphMany

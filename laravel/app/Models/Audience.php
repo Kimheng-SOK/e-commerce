@@ -6,9 +6,11 @@ use Illuminate\Database\Eloquent\Model;
 
 class Audience extends Model
 {
-    public function article(): BelongsTo
+    protected $fillable = ['article_id', 'user_id', 'name'];
+
+    public function article(): BelongsToMany
     {
-        return $this->belongsTo(Article::class);
+        return $this->belongsToMany(Article::class, 'article_audience');
     }
 
     public function user(): BelongsTo

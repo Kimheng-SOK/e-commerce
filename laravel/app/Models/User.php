@@ -74,7 +74,7 @@ class User extends Authenticatable
         return $this->hasOne(Audience::class);
     }
 
-    public funtion comments(): MorphMany
+    public function comments(): MorphMany
     {
         return $this->morphMany(Comment::class, 'commentable');
     }
